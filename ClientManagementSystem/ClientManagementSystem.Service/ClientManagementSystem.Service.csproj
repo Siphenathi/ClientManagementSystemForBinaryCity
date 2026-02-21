@@ -6,4 +6,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="GenericDapperRepo.Wrapper" Version="3.3.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ClientManagementSystem.Data\ClientManagementSystem.Data.csproj" />
+    <ProjectReference Include="..\ClientManagementSystem.Model\ClientManagementSystem.Model.csproj" />
+  </ItemGroup>
+
 </Project>
