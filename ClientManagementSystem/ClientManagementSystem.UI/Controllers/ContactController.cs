@@ -40,12 +40,12 @@ namespace ClientManagementSystem.UI.Controllers
 			return View(contactClients);
 		}
 
-		//[HttpPost]
-		//public async Task<IActionResult> LinkContacts(LinkContacts linkContacts)
-		//{
-		//	var feedBack = await clientService.CreateClientContactAsync(linkContacts);
-		//	return RedirectToAction("LinkContacts", "Client", new { clientCode = linkContacts.ClientCode, feedBack });
-		//}
+		[HttpPost]
+		public async Task<IActionResult> LinkClients(LinkClientsToContact linkClientsToContact)
+		{
+			var feedBack = await contactService.CreateContactClientsAsync(linkClientsToContact);
+			return RedirectToAction("LinkClients", "Contact", new { contactId = linkClientsToContact.ContactId, feedBack });
+		}
 
 		//public async Task<IActionResult> Delete(string clientCode)
 		//{

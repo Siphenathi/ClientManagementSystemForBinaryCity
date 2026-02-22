@@ -75,13 +75,13 @@ namespace ClientManagementSystem.Service
 			return numberOfRowsAffected > 0 ? "Client Registered successfully" : "Something went wrong but don't worry our technical team will look at it";
 		}
 
-		async Task<string> IClientService.CreateClientContactAsync(LinkContactsToClient linkContactsToClient)
+		async Task<string> IClientService.CreateClientContactsAsync(LinkContactsToClient linkContactsToClient)
 		{
 			var numberOfSavedItems = 0;
-			var listOfExistingClientContact = await CreateRepository<ClientContact>(connectionString)
+			var listOfExistingContactsClient = await CreateRepository<ClientContact>(connectionString)
 				.GetAllAsync(CreateParameter(ClientPrimaryKeyColumnName, linkContactsToClient.ClientCode));
 
-			foreach (var clientContact in listOfExistingClientContact)
+			foreach (var clientContact in listOfExistingContactsClient)
 			{
 				_ = await CreateRepository<ClientContact>(connectionString)
 					.DeleteAsync(CreateParameter(ClientPrimaryKeyColumnName, clientContact.ClientCode));

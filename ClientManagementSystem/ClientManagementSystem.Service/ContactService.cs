@@ -50,6 +50,37 @@ namespace ClientManagementSystem.Service
 			return numberOfRowsAffected > 0 ? "Contact Registered successfully" : "Something went wrong but don't worry our technical team will look at it";
 		}
 
+		async Task<string> IContactService.CreateContactClientsAsync(LinkClientsToContact linkClientsToContact)
+		{
+			var numberOfSavedItems = 0;
+			var listOfExistingClientsContact = await CreateRepository<ClientContact>(connectionString)
+				.GetAllAsync(CreateParameter("ContactId", linkClientsToContact.ContactId));
+
+			foreach (var clientContact in listOfExistingClientsContact)
+			{
+				_ = await CreateRepository<ClientContact>(connectionString)
+					.DeleteAsync(CreateParameter("ContactId", clientContact.ContactId));
+			}
+
+			foreach (var client in linkClientsToContact.Clients.Where(x => x.Linked))
+			{
+				var numberOfRowsAffected = await CreateRepository<ClientContact>(connectionString).InsertAsync(new ClientContact
+				{
+					ClientCode = client.ClientCode,
+					ContactId = linkClientsToContact.ContactId,
+					Deleted = false,
+					DateOfRecord = DateTime.Now,
+					DateModified = DateTime.Now
+				});
+				if (numberOfRowsAffected > 0)
+					numberOfSavedItems++;
+			}
+
+			return numberOfSavedItems == linkClientsToContact.Clients.Count(x => x.Linked) ?
+				"Clients are linked successfully" :
+				"Something went wrong, clients are not linked";
+		}
+
 		async Task<LinkClientsToContact> IContactService.GetContactClients(int contactId)
 		{
 			var contact = await CreateRepository<Contact>(connectionString).GetAsync(CreateParameter("ContactId", contactId));
@@ -77,7 +108,7 @@ namespace ClientManagementSystem.Service
 				linkClientsToContact.Clients.Add(new ListOfClients
 				{
 					ClientCode = client.ClientCode,
-					Name = contact.Name,
+					Name = client.Name,
 					Linked = clientContacts != null
 				});
 			}
@@ -116,6 +147,7 @@ namespace ClientManagementSystem.Service
     {
 	    Task<IEnumerable<DisplayContact>> GetAllContactsAsync(bool includeDeletedRecords = false);
 		Task<string> CreateContactAsync(CreateContactRequest createContactRequest);
+		Task<string> CreateContactClientsAsync(LinkClientsToContact linkClientsToContact);
 		Task<LinkClientsToContact> GetContactClients(int contactId);
     }
 }

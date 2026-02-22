@@ -43,7 +43,7 @@ namespace ClientManagementSystem.UI.Controllers
 		[HttpPost]
 	    public async Task<IActionResult> LinkContacts(LinkContactsToClient linkContactsToClient)
 	    {
-		    var feedBack = await clientService.CreateClientContactAsync(linkContactsToClient);
+		    var feedBack = await clientService.CreateClientContactsAsync(linkContactsToClient);
 		    return RedirectToAction("LinkContacts", "Client", new { clientCode = linkContactsToClient.ClientCode, feedBack });
 	    }
 

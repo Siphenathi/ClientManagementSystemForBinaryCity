@@ -48,7 +48,7 @@ else
                     @item.NumberOfContacts
                 </td>
                 <td class="text-center">
-                    @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                    @* @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) | *@
                     @Html.ActionLink("Link Clients", "LinkClients", new { contactId = item.ContactId })
                     @* @Html.ActionLink("Delete", "Delete", new { clientCode = item.ClientCode }, new { @class = "btn btn-danger" }) *@
                 </td>
