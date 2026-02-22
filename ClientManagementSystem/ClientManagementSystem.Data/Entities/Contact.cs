@@ -7,5 +7,4 @@ public class Contact
 	public string Surname { get; set; }
 	public string Email { get; set; }
 	public DateTime DateOfRecord { get; set; }
-	public int NumberOfClients { get; set; }
 }

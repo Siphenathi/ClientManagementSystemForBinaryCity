@@ -10,16 +10,25 @@ namespace ClientManagementSystem.Service
 	{
 		private const string ClientPrimaryKeyColumnName = "ClientCode";
 
-		async Task<IEnumerable<Client>> IClientService.GetAllClientsAsync(bool includeDeletedRecords)
+		async Task<IEnumerable<DisplayClients>> IClientService.GetAllClientsAsync(bool includeDeletedRecords)
 		{
 			var listOfClients = await CreateRepository<Client>(connectionString).GetAllAsync(CreateParameter("Deleted", includeDeletedRecords));
-			if (listOfClients == null || !listOfClients.Any()) return new List<Client>();
+			if (listOfClients == null || !listOfClients.Any()) return new List<DisplayClients>();
+
+			var displayClient = new List<DisplayClients>();
 			foreach (var client in listOfClients)
 			{
-				client.NumberOfContacts = await GetNumberOfClientContacts(includeDeletedRecords, client.ClientCode);
+				displayClient.Add(new DisplayClients
+				{
+					ClientCode = client.ClientCode,
+					Name = client.Name,
+					DateOfRecord = client.DateOfRecord,
+					NumberOfContacts = await GetNumberOfClientContacts(includeDeletedRecords, client.ClientCode)
+				});
 			}
-			return listOfClients.OrderBy(x => x.Name);
+			return displayClient.OrderBy(x => x.Name);
 		}
+
 
 		async Task<IEnumerable<ClientContact>> IClientService.GetAllClientContactsAsync(int contactId)
 		{
@@ -29,7 +38,7 @@ namespace ClientManagementSystem.Service
 
 		async Task<string> IClientService.CreateClientAsync(CreateClientRequest createClientRequest)
 		{
-			var clientCode = "332"; //Todo: generate the code according to the spec
+			var clientCode = UniqueCodeGenerator.GenerateUniqueAlphaNumericHandler(createClientRequest.Name);
 			var client = await CreateRepository<Client>(connectionString).GetAsync(new Dictionary<string, object>
 			{
 				{ ClientPrimaryKeyColumnName, clientCode },
@@ -41,10 +50,45 @@ namespace ClientManagementSystem.Service
 			var numberOfRowsAffected = await CreateRepository<Client>(connectionString).InsertAsync(new Client
 			{
 				ClientCode = clientCode,
-				Name = createClientRequest.Name
+				Name = createClientRequest.Name,
+				DateOfRecord = DateTime.Now
 			});
 
 			return numberOfRowsAffected > 0 ? "Client Registered successfully" : "Something went wrong but don't worry our technical team will look at it";
+		}
+
+		async Task<ManageClientContact> IClientService.GetClientContact(string clientCode)
+		{
+			var client = await CreateRepository<Client>(connectionString).GetAsync(CreateParameter("ClientCode", clientCode));
+			
+			var allContacts = await CreateRepository<Contact>(connectionString).GetAllAsync();
+			var manageClientContact = new ManageClientContact
+			{
+				ClientCode = clientCode,
+				Name = client.Name,
+				DateOfRecord = client.DateOfRecord,
+				Contacts = []
+			};
+
+			foreach (var contact in allContacts)
+			{
+				var clientContacts = await CreateRepository<ClientContact>(connectionString).GetAsync(new Dictionary<string, object>
+				{
+					{"ClientCode", clientCode},
+					{"ContactId", contact.ContactId}
+				});
+
+				manageClientContact.Contacts.Add(new ListOfContacts
+				{
+					ContactId = contact.ContactId,
+					Name = contact.Name,
+					Surname = contact.Surname,
+					Email = contact.Email,
+					Linked = clientContacts != null
+				});
+			}
+
+			return manageClientContact;
 		}
 
 		private static IRepository<T> CreateRepository<T>(string connectionString) where T : class

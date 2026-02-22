@@ -1,46 +1,73 @@
-﻿namespace ClientManagementSystem.Service
+﻿using System.Text;
+
+namespace ClientManagementSystem.Service
 {
-    public static class UniqueCodeGenerator
-    {
-	    public static string GenerateCode(string text)
-	    {
-			if(string.IsNullOrWhiteSpace(text))
+	public class UniqueCodeGenerator
+	{
+		private static readonly Dictionary<string, int> ClientCounters = new();
+
+		public static string GenerateUniqueAlphaNumericHandler(string clientName, string? clientCodeToIncrement = null)
+		{
+			if (string.IsNullOrWhiteSpace(clientName))
 				return string.Empty;
 
-			var wordOfText = text.Split([' ']);
+			if (string.IsNullOrWhiteSpace(clientCodeToIncrement))
+				return GetUniqueAlphaNumeric(clientName);
 
-			return "";
-	    }
+			var oldClientCodeLastDigit = int.Parse(clientCodeToIncrement.Substring(5, 1));
+			oldClientCodeLastDigit++;
+			return clientCodeToIncrement[..5] + oldClientCodeLastDigit;
+		}
 
-	    public static string GetAlphabets(string text)
-	    {
-		    if (string.IsNullOrWhiteSpace(text))
-			    return string.Empty;
+		public static string GetUniqueAlphaNumeric(string clientName)
+		{
+			if (string.IsNullOrWhiteSpace(clientName))
+				return string.Empty;
 
-		    text = text.ToUpper();
-			var wordOfText = text.Split([' '], StringSplitOptions.RemoveEmptyEntries);
-			var requiredCharacters = string.Empty;
-
-			if (wordOfText.Length == 1)
+			var alphaPrefix = GetAlphaPrefix(clientName);
+			if (!ClientCounters.TryAdd(alphaPrefix, 1))
 			{
-				requiredCharacters = wordOfText.FirstOrDefault()?.Substring(0, 3);
+				ClientCounters[alphaPrefix]++;
 			}
-			else if (wordOfText.Length == 2)
-			{
 
+			var numericPart = ClientCounters[alphaPrefix].ToString("D3");
+			ClientCounters.Clear();
+			return alphaPrefix + numericPart;
+		}
+
+		public static string GetAlphaPrefix(string clientName)
+		{
+			var words = clientName.Split([' '], StringSplitOptions.RemoveEmptyEntries);
+			var prefix = new StringBuilder();
+
+			if (words.Length > 1)
+			{
+				foreach (var word in words)
+				{
+					if (prefix.Length >= 3 || string.IsNullOrEmpty(word)) continue;
+					var firstChar = char.ToUpper(word[0]);
+					if (char.IsLetter(firstChar))
+					{
+						prefix.Append(firstChar);
+					}
+				}
 			}
 			else
 			{
-				foreach (var word in wordOfText)
+				var word = words[0];
+				foreach (var c in word.Where(c => prefix.Length < 3 && char.IsLetter(c)))
 				{
-					if (requiredCharacters.Length == 3)
-						continue;
-
-					requiredCharacters += word[..1];
+					prefix.Append(char.ToUpper(c));
 				}
 			}
 
-			return requiredCharacters;
-	    }
-    }
+			var fillChar = 'A';
+			while (prefix.Length < 3)
+			{
+				prefix.Append(fillChar);
+				fillChar++;
+			}
+			return prefix.ToString();
+		}
+	}
 }

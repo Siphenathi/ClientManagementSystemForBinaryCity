@@ -13,7 +13,7 @@ namespace ClientManagementSystem.Service
 			foreach (var contact in listOfContacts)
 			{
 				var clients = await CreateRepository<ClientContact>(connectionString).GetAllAsync(CreateParameter("ContactId", contact.ContactId));
-				contact.NumberOfClients = clients.Count();
+				//contact.NumberOfClients = clients.Count();
 			}
 
 			return listOfContacts;

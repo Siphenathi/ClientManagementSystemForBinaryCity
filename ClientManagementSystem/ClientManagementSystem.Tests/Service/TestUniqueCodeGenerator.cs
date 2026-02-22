@@ -12,39 +12,52 @@ namespace ClientManagementSystem.Tests.Service
 			//Arrange
 
 			//Act
-			var actual = UniqueCodeGenerator.GetAlphabets(input);
+			var actual = UniqueCodeGenerator.GetUniqueAlphaNumeric(input);
 
 			//Assert
 			actual.Should().Be(string.Empty);
 		}
 
-		//[TestCase("First National Bank", "FNB")]
+		[TestCase("First National Bank", "FNB")]
 		[TestCase("Standard Bank", "SBA")]
-	    public void GetAlphabets_GivenTextWith3Words_ShouldReturnFirst3LettersOfWord(string input, string expected)
+		[TestCase("Protea", "PRO")]
+		public void GetAlphaPrefix_GivenText_ShouldReturnOnlyFirst3LettersOfWord(string input, string expected)
 	    {
 			//Arrange
 
 
 			//Act
-			var actual = UniqueCodeGenerator.GetAlphabets(input);
+			var actual = UniqueCodeGenerator.GetAlphaPrefix(input);
 
 			//Assert
 			actual.Should().Be(expected);
-
 		}
 
-		[Test]
-	    public void GetUniqueDigits_WhenCalled_ShouldGenerateUniqueDigits()
-	    {
-		    //Arrange
-		    var text = string.Empty;
+		[TestCase("First National Bank", "FNB001")]
+		[TestCase("Standard Bank", "SBA001")]
+		[TestCase("Protea","PRO001")]
+		public void GetAlphabets_GivenText_ShouldReturnAlphaNumeric(string input, string expected)
+		{
+			//Arrange
 
-		    //Act
-		    var actual = UniqueCodeGenerator.GenerateCode(text);
+			//Act
+			var actual = UniqueCodeGenerator.GetUniqueAlphaNumeric(input);
 
-		    //Assert
-		    actual.Should().Be(string.Empty);
-	    }
+			//Assert
+			actual.Should().Be(expected);
+		}
 
+		[TestCase("First National Bank", "FNB002", "FNB003")]
+		[TestCase("Standard Bank", "SBA002", "SBA003")]
+		public void GetAlphabets_GivenSameTextForSecondTime_ShouldReturnAlphaNumeric(string input, string oldClientCode, string expected)
+		{
+			//Arrange
+
+			//Act
+			var actual = UniqueCodeGenerator.GenerateUniqueAlphaNumericHandler(input, oldClientCode);
+
+			//Assert
+			actual.Should().Be(expected);
+		}
 	}
 }
