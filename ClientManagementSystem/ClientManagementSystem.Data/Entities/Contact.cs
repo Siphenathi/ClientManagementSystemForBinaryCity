@@ -7,4 +7,5 @@ public class Contact
 	public string Surname { get; set; }
 	public string Email { get; set; }
 	public DateTime DateOfRecord { get; set; }
+	public DateTime DateModified { get; set; }
 }

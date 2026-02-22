@@ -5,14 +5,13 @@
 }
 
 <h1 class="text-center">All Clients</h1>
-
 <p>
-    <a asp-action="Create" class="btn btn-primary">Create New</a>
+    <a asp-action="Create" class="btn btn-primary">Create Client</a>
 </p>
 
 @if (!Model.Any())
 {
-    <p style="color:orange">No client(s) found</p>
+    <p style="color:orange">No clients found</p>
 }
 else
 {
@@ -25,7 +24,7 @@ else
             <th>
                 @Html.DisplayNameFor(model => model.Name)
             </th>
-                <th class="text-center">
+            <th class="text-center">
                 Number Of Linked Contacts
             </th>
             <th>Action</th>
@@ -44,9 +43,8 @@ else
                     @item.NumberOfContacts
                 </td>
                 <td class="text-center">
-                    @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                    @Html.ActionLink("Details", "Details", new {  clientCode=item.ClientCode }) |
-                    @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                        @Html.ActionLink("Link Contacts", "LinkContacts", new { clientCode = item.ClientCode }, new { @class = "btn btn-info" })
+                        @Html.ActionLink("Delete", "Delete", new { clientCode = item.ClientCode }, new { @class = "btn btn-danger" })
                 </td>
             </tr>
         }
@@ -54,4 +52,11 @@ else
     </table>
 }
 
-
+@if (ViewBag.FeedbackMsg != null)
+{
+    <script type="text/javascript">
+            window.onload = function () {
+                alert("@ViewBag.FeedbackMsg");
+            };
+    </script>
+}

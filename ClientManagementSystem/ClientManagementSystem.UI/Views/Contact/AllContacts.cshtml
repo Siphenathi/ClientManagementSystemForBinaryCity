@@ -1,0 +1,68 @@
+﻿@model IEnumerable<ClientManagementSystem.Model.DisplayContact>
+@{
+    ViewData["Title"] = "AllContacts";
+}
+
+<h1 class="text-center">All Contacts</h1>
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create Contact</a>
+</p>
+
+@if (!Model.Any())
+{
+    <p style="color:orange">No Contacts found</p>
+}
+else
+{
+    <table class="table table-striped table-hover table-bordered">
+        <thead class="table-dark">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ContactId)
+            </th>
+            <th>
+                @Html.DisplayName("Full Name")
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <th class="text-center">
+                Number Of Linked Clients
+            </th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model) {
+            <tr>
+                <td class="text-left">
+                    @Html.DisplayFor(modelItem => item.ContactId)
+                </td>
+                <td class="text-left">
+                    @item.Name @item.Surname
+                </td>
+                <td class="text-left">
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td class="text-center">
+                    @item.NumberOfContacts
+                </td>
+                <td class="text-center">
+                    @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                    @Html.ActionLink("Link Clients", "LinkClients", new { contactId = item.ContactId })
+                    @* @Html.ActionLink("Delete", "Delete", new { clientCode = item.ClientCode }, new { @class = "btn btn-danger" }) *@
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@if (ViewBag.FeedbackMsg != null)
+{
+    <script type="text/javascript">
+        window.onload = function () {
+            alert("@ViewBag.FeedbackMsg");
+        };
+    </script>
+}
