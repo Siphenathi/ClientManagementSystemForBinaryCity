@@ -44,7 +44,7 @@ namespace ClientManagementSystem.Service
 				Name = createClientRequest.Name
 			});
 
-			return numberOfRowsAffected > 0 ? "Client Registered successfully" : "Something went wrong but don't worry our technical team is working on it";
+			return numberOfRowsAffected > 0 ? "Client Registered successfully" : "Something went wrong but don't worry our technical team will look at it";
 		}
 
 		private static IRepository<T> CreateRepository<T>(string connectionString) where T : class

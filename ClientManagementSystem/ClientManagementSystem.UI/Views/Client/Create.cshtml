@@ -1,0 +1,42 @@
+﻿@model ClientManagementSystem.Model.CreateClientRequest
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create Client</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="ClientCode" class="control-label"></label>
+                <input asp-for="ClientCode" class="form-control" readonly="readonly" />
+                <span asp-validation-for="ClientCode" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <br/>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@if(!string.IsNullOrWhiteSpace(ViewBag.FeedbackMsg))
+{
+    <p style="color:red">@ViewBag.FeedbackMsg</p>
+}
+
+<div>
+    <a asp-action="AllClients">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
